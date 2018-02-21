@@ -1,0 +1,26 @@
+# This file is managed by Puppet. Don't touch...
+
+# General Configuration
+<% @base_sshd_config_lines.sort.each do |line| -%>
+<%= line %>
+<% end -%>
+
+
+<% if @base_sshd_allowed_groups && @base_sshd_allowed_groups.count >= 1 -%>
+# Allowed Groups
+AllowGroups <% @base_sshd_allowed_groups.sort.each do |group| %><%= group %> <% end %>
+<% end -%>
+
+
+<% if @base_sshd_sftp_groups && @base_sshd_sftp_groups.count >= 1 -%>
+# SFTP Accounts
+<% @base_sshd_sftp_groups.sort.each do |group| -%>
+Match Group <%= group %>
+    ChrootDirectory %h
+    X11Forwarding no
+    AllowTcpForwarding no
+    ForceCommand internal-sftp
+
+<% end -%>
+<% end -%>
+

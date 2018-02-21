@@ -1,0 +1,29 @@
+# Main property file for JTS.  This file controls how often the process
+# will run and what directories it should check for the data.
+#
+
+include "constants.properties"
+include "common.properties"
+
+# DATA_SOURCE: The name of the process
+DATA_SOURCE=jts
+
+# RUN_FREQUENCY: How often the process should execute (ie: 10m, 30s, 1h, etc)
+RUN_FREQUENCY=<%= @jts_run_frequency %>
+
+# INVENTORY.RETRIEVE_URL.x: The full path to the directory to copy data from
+INVENTORY.RETRIEVE_URL.1=<%= @jts_poll_directory %>
+
+# INVENTORY.RETRIEVE_READY.x: The 'done' file extension monitored before beginning transfer
+INVENTORY.RETRIEVE_READY.1=done
+
+# INVENTORY.RETRIEVE_FILTER.x: A regular expression to limit files transferred (ie: .*txt )
+#INVENTORY.RETRIEVE_FILTER.1=
+
+# INVENTORY.MIN_ITEMS: The minimum batch size to wait for before beginning transfer
+#INVENTORY.MIN_ITEMS=
+
+# PA.SEND_URL.x: The destination URL to transfer
+PA.SEND_URL.1=sftp://<%= @jts_sftp_user %>:<%= @jts_sftp_password_hash %>@<%= @jts_sftp_ip %>:<%= @jts_sftp_destination_path %>
+PA.SEND_COMPLETE.1=done
+

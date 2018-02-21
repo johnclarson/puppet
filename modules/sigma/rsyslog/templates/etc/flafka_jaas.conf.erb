@@ -1,0 +1,18 @@
+Client {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  storeKey=true
+  useTicketCache=true
+  serviceName="kafka"
+  client=true
+  keyTab="<%= @rsyslog_logger_keytab %>"
+  principal="<%= @rsyslog_logger_principal %>";
+};
+KafkaClient {
+    com.sun.security.auth.module.Krb5LoginModule required
+    useKeyTab=true
+    storeKey=true
+    keyTab="<%= @rsyslog_logger_keytab %>"
+    principal="<%= @rsyslog_logger_principal %>";
+    };
+

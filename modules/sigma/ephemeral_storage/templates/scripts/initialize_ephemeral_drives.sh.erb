@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -e
+
+function clean_fstab( ) {
+    drive_letter=$1
+    drive_number=$2
+    if [[ $( grep "/dev/xvd${drive_letter}" /etc/fstab | grep -vi xfs | wc -l ) -ge 1 ]]; then
+        echo "    pulling out bad drive definitions and adding one clean line at the end for /dev/xvd${drive_letter}..."
+        sed -i -e "s/^.*\/dev\/xvd${drive_letter}.*$//" /etc/fstab
+    fi
+}
+
+function query_metadata_drive_letter( ) {
+    drive_number=$1
+    result=$( curl http://169.254.169.254/latest/meta-data/block-device-mapping/ephemeral${drive_number}/ 2>/dev/null | sed -e "s/^sd//" )
+    echo ${result}
+}
+
+diskcount=<%= @diskcount %>
+starting_drive_number=<%= @starting_drive_number %>
+ending_drive_number=$(( ${starting_drive_number} + ${diskcount} - 1 ))
+
+for drive_number in $( seq ${starting_drive_number} ${ending_drive_number} ); do
+    drive_letter=$( query_metadata_drive_letter ${drive_number} )
+    clean_fstab ${drive_letter} ${drive_number}
+    mkdir -p /data/${drive_number}
+    set +e
+    if mount | grep -v xfs | grep xvd${drive_letter} >/dev/null 2>&1; then
+        echo "    unmounting non-XFS /dev/xvd${drive_letter}..."
+        umount /dev/xvd${drive_letter}
+    fi
+    set -e
+    if file -sL /dev/xvd${drive_letter} | grep -v XFS 2>/dev/null; then
+        echo "    initializing XFS filesystem on /dev/xvd${drive_letter}..."
+        mkfs.xfs -f /dev/xvd${drive_letter}
+    fi
+    if  ! mount | grep /dev/xvd${drive_letter} | grep xfs >/dev/null 2>&1; then
+        echo "    mounting /dev/xvd${drive_letter}..."
+        mount -t xfs -o noauto /dev/xvd${drive_letter} /data/${drive_number}
+    fi
+done
+
+exit 0

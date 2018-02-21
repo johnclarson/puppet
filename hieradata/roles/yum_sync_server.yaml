@@ -1,0 +1,10 @@
+---
+
+classes:
+  - profiles::yum_sync_server
+
+
+base::repos:
+  sigma-custom:
+    yum_uri:                                                   "sigma-custom"
+

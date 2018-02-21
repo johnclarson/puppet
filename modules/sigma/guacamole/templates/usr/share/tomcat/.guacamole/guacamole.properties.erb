@@ -1,0 +1,15 @@
+# Guacamole Settings
+
+# NoAuth properties
+#noauth-config: /usr/share/tomcat/.guacamole/noauth-config.xml
+
+# Require SSL/TLS encrytion between web app and guacd
+#guacd-ssl: true
+
+# Use LDAP Authentication
+ldap-hostname:            <%= @ldap_hostname %>
+ldap-port:                <%= @ldap_port %>
+ldap-username-attribute:  <%= @ldap_username_attribute %>
+ldap-user-base-dn:        <%= @ldap_user_base_dn %>
+ldap-group-base:          <%= @ldap_group_base %>
+ldap-config-base-dn:      <%= @ldap_config_base_dn %>

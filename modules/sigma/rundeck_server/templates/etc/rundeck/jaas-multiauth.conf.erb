@@ -1,0 +1,28 @@
+multiauth {
+    com.dtolabs.rundeck.jetty.jaas.JettyCachingLdapLoginModule sufficient
+      debug="true"
+      contextFactory="com.sun.jndi.ldap.LdapCtxFactory"
+      providerUrl="<%= @rundeck_server_bind_url %>"
+      authenticationMethod="simple"
+      forceBindingLogin="true"
+      userBaseDn="<%= @rundeck_server_bind_user_dn %>"
+      userRdnAttribute="uid"
+      userIdAttribute="uid"
+      userPasswordAttribute="userPassword"
+      userObjectClass="inetOrgPerson"
+      roleBaseDn="<%= @rundeck_server_bind_role_dn %>"
+      roleNameAttribute="cn"
+      roleMemberAttribute="member"
+      roleObjectClass="groupofnames"
+      cacheDurationMillis="300000"
+      supplementalRoles="user"
+      reportStatistics="true"
+      timeoutRead="10000"
+      timeoutConnect="20000"
+      nestedGroups="false";
+
+    org.eclipse.jetty.plus.jaas.spi.PropertyFileLoginModule required
+      debug="true"
+      file="/etc/rundeck/realm.properties";
+
+};

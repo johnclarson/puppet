@@ -1,0 +1,45 @@
+---
+classes:
+  - profiles::use_case_remote_desktop_gateway
+
+base::repos:
+  sigma-cloudera-manager-5.10.0-el7:
+    yum_uri:                                                     sigma-cloudera-manager-5.10.0-el7
+  sigma-oracle-java:
+    yum_uri:                                                     sigma-oracle-java
+
+docker::manage_service:                                          false
+
+java::package:                                                   jdk1.8.0_112
+
+use_case_remote_desktop_gateway::web_server::vhosts:
+  guacamole.%{::sigma_tld}_ssl:
+    default_vhost:                      true
+    servername:                         '%{::ipaddress}'
+    port:                               443
+    docroot:                            /var/www/html
+    options:
+        - FollowSymLinks 
+        - MultiViews
+    manage_docroot:                     false
+    ssl:                                true
+    ssl_cert:                           /etc/pki/tls/certs/localhost.crt
+    ssl_key:                            /etc/pki/tls/private/localhost.key
+    proxy_pass:                         { path: /, url: 'http://localhost:8080/' }
+  guacamole.%{::sigma_tld}_nossl:
+    servername:                         '%{::ipaddress}'
+    port:                               80
+    redirect_source:                    
+        - 'permanent /'
+    redirect_dest:                      
+        - 'https://%{::ipaddress}/'
+    docroot:                            /var/www/html
+    options:
+        - FollowSymLinks 
+        - MultiViews
+
+web_server::config_source:              'use_case_remote_desktop_gateway'
+web_server::modules_builtin:
+  ssl:                                  {}
+  proxy:                                {}
+

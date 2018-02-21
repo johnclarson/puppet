@@ -1,0 +1,33 @@
+## Sudoers allows particular user to run various commands as
+## the root user, without needing the root password.
+##
+##
+## This file should be edited with the
+## 'visudo -f /home/admin/etc/sudoers' command.
+
+#includedir /etc/sudoers.d
+
+
+##
+## Allow root to run any commands anywhere
+root	ALL=(ALL)	ALL
+
+## Allows members of the 'sys' group to run networking, software,
+## service management apps and more.
+# %sys ALL = NETWORKING, SOFTWARE, SERVICES, STORAGE, DELEGATING, PROCESSES, LOCATE, DRIVERS
+
+## Aloows people in the group wheel to run all commands
+#%wheel ALL=(ALL)	ALL
+<% @sudo_sudogroups.sort.each do |group| -%>
+%<%= group %> ALL=(ALL)	ALL
+<% end -%>
+
+## Same thing without a password
+# %wheel	ALL=(ALL)	ALL
+
+## Allows members of the users groiup to mount and unmount the
+## cdrom as root
+# %users ALL=/sbin/mount /mnt/cdrom, /sbin/umount /mnt/cdrom
+
+## Allows members of the users group to shutdown this system
+# %users localhost=/sbin/shutdown -h now

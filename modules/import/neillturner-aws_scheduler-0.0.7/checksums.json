@@ -1,0 +1,13 @@
+{
+  "LICENSE": "b86077647c945ae6656bd903ad556495",
+  "README.md": "39aa01c77c4e7c417308385a1cc15827",
+  "Rakefile": "47bd63c5aa7c986d83e6bc49b1f14058",
+  "manifests/deps/debian.pp": "61a43fa5e66612251a7f5e31e8cc100f",
+  "manifests/deps/redhat.pp": "2261ec633453b946fa3bda9b7abf03a7",
+  "manifests/deps.pp": "f82d48d32cafafbdaf92e58db6474581",
+  "manifests/init.pp": "e225e5de39ff9030ecccbef7738905e8",
+  "metadata.json": "30caebcc7222ea30a8900032ded28f4d",
+  "templates/aws-scheduler.cfg.erb": "91ee0f3cd568e64b5e573e4fb0a531e8",
+  "templates/aws-scheduler.py.erb": "4362675fa03bb903fd02420123ca3c5a",
+  "templates/boto.cfg.erb": "899bcf951839e67f4ae7546279e4aef4"
+}

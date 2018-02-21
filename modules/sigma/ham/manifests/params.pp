@@ -1,0 +1,17 @@
+class ham::params {
+    $ham_usecase_repository                    = hiera( 'ham::usecase_repository', "" )
+    $ham_link_application_templates_project    = hiera( 'ham::link_application_templates_project', "" )
+    $ham_foreman_api_url                       = hiera( 'ham::foreman_api_url', 'null' )
+    $ham_zookeeper                             = hiera( 'ham::zookeeper', "" )
+    $ham_deli                                  = hiera( 'ham::deli', "" )
+    $ham_packages                              = hiera( 'ham::packages', [ 'ham' ] )
+    $ham_foreman_template_location             = hiera( 'ham::foreman_template_location', "" )
+    $ham_marathon_uri                          = hiera( 'ham::marathon_uri', "" )
+    $ham_link_image                            = hiera( 'ham::link_image', "" )
+    $ham_gitlab_api_url                        = hiera( 'ham::gitlab_api_url', "" )
+    $ham_guacd_url                             = hiera( 'ham::guacd_url', "" )
+    $ham_gitlab_project                        = hiera( 'ham::gitlab_project', "" )
+    $ham_gitlab_url                            = hiera( 'ham::gitlab_url', "" )
+    $ham_stitch_zookeeper_path                 = hiera( 'ham::stitch_zookeeper_path', "" )
+    $ham_foreman_hostgroup                     = hiera_hash( 'ham::foreman_hostgroup', undef )
+}

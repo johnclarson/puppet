@@ -1,0 +1,24 @@
+{
+    "hostgroup": {
+      "name": "<%= @name %>",
+      "subnet_id": <%= @subnet_id %>,
+      "operatingsystem_id": <%= @operatingsystem_id %>,
+      "domain_id": <%= @domain_id %>,
+      "environment_id": <%= @environment_id %>,
+      "compute_profile_id": <%= @compute_profile_id %>,
+      "puppet_proxy_id": <%= @puppet_proxy_id %>,
+      "puppet_ca_proxy_id": <%= @puppet_ca_proxy_id %>,
+      "parent_id": <%= @parent_id %>,
+      "architecture_id": <%= @architecture_id %>,
+      "realm_id": <%= @realm_id %>,
+      "title": "<%= @title %>",
+      "parameters": [ <% @parameters.each_with_index do |parameter, i| -%>"<%= parameter -%>"<%= ',' if i < (@parameters.size - 1) -%><% end %> ],
+      "template_combinations": [ <% @template_combinations.each_with_index do |tc, i| -%>"<%= tc -%>"<%= ',' if i < (@template_combinations.size - 1) -%><% end %> ],
+      "puppetclasses": [ <% @puppetclasses.each_with_index do |pclass, i| -%>"<%= pclass -%>"<%= ',' if i < (@puppetclasses.size - 1) -%><% end %> ],
+      "config_groups": [ <% @config_groups.each_with_index do |cg, i| -%>"<%= cg -%>"<%= ',' if i < (@config_groups.size - 1) -%><% end %> ],
+      "all_puppetclasses": [ <% @all_puppetclasses.each_with_index do |apc, i| -%>"<%= apc -%>"<%= ',' if i < (@all_puppetclasses.size - 1) -%><% end %> ],
+      "all_puppetclasses": [ <% @all_puppetclasses.each_with_index do |apc, i| -%>"<%= apc -%>"<%= ',' if i < (@all_puppetclasses.size - 1) -%><% end %> ],
+      "locations": [ <% @locations.each_with_index do |loc, i| -%>"<%= loc -%>"<%= ',' if i < (@locations.size - 1) -%><% end %> ],
+      "organizations": [ <% @organizations.each_with_index do |org, i| -%>"<%= org -%>"<%= ',' if i < (@organizations.size - 1) -%><% end %> ],
+    }
+}

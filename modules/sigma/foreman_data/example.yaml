@@ -1,0 +1,305 @@
+---
+
+foreman_data::objects:
+  compute_profiles:
+    "sigma-centos-7-base.t2.small":
+      data:
+        name:                                                      "sigma-centos-7-base.t2.small"
+        compute_attributes:
+          compute_resource_name:                                   "UC2S"
+          vm_attrs:
+            flavor_id:                                             "t2.small"
+            image_tag:                                             "genesis-ami by ami-builder on 20170419-153250"
+            managed_ip:                                            "public"
+            security_group_ids:                                    [ "" ]
+            subnet_name:                                           "public-a"        
+    "sigma-centos-7-base.t2.medium":
+      data:
+        name:                                                      "sigma-centos-7-base.t2.medium"
+        compute_attributes:
+          compute_resource_name:                                   "UC2S"
+          vm_attrs:
+            flavor_id:                                             "t2.medium"
+            image_tag:                                             "sigma-centos-7-base 20170419-153250"
+            managed_ip:                                            "public"
+            security_group_ids:                                    [ "" ]
+            subnet_name:                                           "public-a"        
+    "sigma-centos-7-base.t2.large":
+      data:
+        name:                                                      "sigma-centos-7-base.t2.large"
+        compute_attributes:
+          compute_resource_name:                                   "UC2S"
+          vm_attrs:
+            flavor_id:                                             "t2.large"
+            image_tag:                                             "sigma-centos-7-base 20170419-153250"
+            managed_ip:                                            "private"
+            security_group_ids:                                    [ "sg-683db314" ]
+            subnet_name:                                           "public-a"        
+    "sigma-centos-7-base.m1.xlarge":
+      data:
+        name:                                                      "sigma-centos-7-base.m1.xlarge"
+        compute_attributes:
+          compute_resource_name:                                   "UC2S"
+          vm_attrs:
+            flavor_id:                                             "m1.xlarge"
+            image_tag:                                             "sigma-centos-7-base 20170419-153250"
+            managed_ip:                                            "private"
+            security_group_ids:                                    [ "sg-683db314" ]
+            subnet_name:                                           "public-a"        
+    "sigma-centos-7-base.m2.2xlarge":
+      data:
+        name:                                                      "sigma-centos-7-base.m2.2xlarge"
+        compute_attributes:
+          compute_resource_name:                                   "UC2S"
+          vm_attrs:
+            flavor_id:                                             "m2.2xlarge"
+            image_tag:                                             "sigma-centos-7-base 20170419-153250"
+            managed_ip:                                            "private"
+            security_group_ids:                                    [ "sg-683db314" ]
+            subnet_name:                                           "public-a"        
+    "sigma-centos-7-base.m3.xlarge":
+      data:
+        name:                                                      "sigma-centos-7-base.m3.xlarge"
+        compute_attributes:
+          compute_resource_name:                                   "UC2S"
+          vm_attrs:
+            flavor_id:                                             "m3.xlarge"
+            image_tag:                                             "sigma-centos-7-base 20170419-153250"
+            managed_ip:                                            "private"
+            security_group_ids:                                    [ "sg-683db314" ]
+            subnet_name:                                           "public-a"        
+  compute_resources:
+    "UC2S":
+      data:
+        access_key:                                                "null"
+        description:                                               "Sigma.up AWS portal"
+        name:                                                      "UC2S"
+        provider:                                                  "EC2"
+        provider_friendly_name:                                    "EC2"
+        region:                                                    "us-east-1"
+        url:                                                       "us-east-1"
+  config_templates:
+    "sigma_user_data":
+      data:
+        name:                                                      "sigma_user_data"
+        operatingsystems:                                          [ 1 ]
+        snippet:                                                   false
+        template_combinations:                                     []
+        template_kind_id:                                          8
+    "sigma_freeipa_register":
+      data:
+        name:                                                      "sigma_freeipa_register"
+        snippet:                                                   true
+        template_combinations:                                     []
+    "sigma_custom_facts":
+      data:
+        name:                                                      "sigma_custom_facts"
+        snippet:                                                   true
+        template_combinations:                                     []
+    "sigma.puppet_setup":
+      data:
+        name:                                                      "sigma.puppet_setup"
+        snippet:                                                   true
+        template_combinations:                                     []
+    "fix_hosts_ec2":
+      data:
+        name:                                                      "fix_hosts_ec2"
+        snippet:                                                   true
+        template_combinations:                                     []
+    "sigma.puppet.conf":
+      data:
+        name:                                                      "sigma.puppet.conf"
+        snippet:                                                   true
+        template_combinations:                                     []
+  domains:
+    "sigma.up":
+      data:
+        dns_id:                                                    null
+        name:                                                      "sigma.up"
+        subnets:                                                   [ 1,2,3,4 ]
+  environments:
+    "env-production":
+      data:
+       name:                                                       production
+    "env-production_sigma_up":
+      data:
+       name:                                                       production_sigma_up
+  hostgroups:
+    "production_sigma_up":
+      data:
+        ancestry:                                                  null
+        architecture_id:                                           1
+        compute_profile_id:                                        1
+        domain_id:                                                 1
+        environment_id:                                            2
+        medium_id:                                                 null
+        name:                                                      "production_sigma_up"
+        operatingsystem_id:                                        1
+        puppet_ca_proxy_id:                                        1
+        puppet_proxy_id:                                           1
+        realm_id:                                                  1
+        subnet_id:                                                 1
+        title:                                                     "production_sigma_up"
+    "production_sigma_up-identity_server":
+      data:
+        ancestry:                                                  "production_sigma_up"
+        name:                                                      "identity_server"
+        title:                                                     "production_sigma_up/identity_server"
+    "production_sigma_up-provisioning_server":
+      data:
+        ancestry:                                                  "production_sigma_up"
+        name:                                                      "provisioning_server"
+        title:                                                     "production_sigma_up/provisioning_server"
+  images:
+    "centos-7-sigma-base-041917":
+      data:
+        architecture_id:                                           1
+        architecture_name:                                         "x86_64"
+        compute_resource_id:                                       1
+        iam_role:                                                  "null"
+        name:                                                      "centos-7-sigma-base-041917"
+        operatingsystem_id:                                        1
+        user_data:                                                 true
+        username:                                                  "root"
+        uuid:                                                      "ami-0b980a1d"
+    "centos-7-sigma-desktop-041917":
+      data:
+        architecture_id:                                           1
+        architecture_name:                                         "x86_64"
+        compute_resource_id:                                       1
+        iam_role:                                                  "null"
+        name:                                                      "centos-7-sigma-desktop-041917"
+        operatingsystem_id:                                        1
+        user_data:                                                 true
+        username:                                                  "root"
+        uuid:                                                      "ami-03881a15"
+  operatingsystems:
+    "CentOS":
+      data:
+        architectures:                                             [ 1 ]
+        config_templates:                                          [ 85 ]
+        description:                                               ""
+        family:                                                    "RedHat"
+        images:                                                    [ 5,6 ]
+        major:                                                     "7"
+        media:                                                     []
+        minor:                                                     "3"
+        name:                                                      "CentOS"
+        os_default_templates:
+          config_template_id:                                      85
+        parameters:                                                []
+        password_hash:                                             "SHA256"
+        provisioning_templates:
+          id:                                                      85
+        release_name:                                              null
+        title:                                                     "CentOS 7.3.1611"
+  realms:
+    "SIGMA.UP":
+      data:
+        name:                                                      "SIGMA.UP"
+        realm_type:                                                "FreeIPA"
+        realm_proxy_id:                                            1
+  smart_proxies:
+    "local":
+      data:
+        features:                                                  [ 2,5,6,8,10 ]
+        name:                                                      "local"
+        url:                                                       "https://c-prov-1.%{::sigma_tld}:8443"
+  subnets:
+    "public-a":
+      data:
+        boot_mode:                                                 "DHCP"
+        cidr:                                                      25
+        dhcp:                                                      null
+        dns:                                                       null
+        dns_primary:                                               null
+        dns_secondary:                                             null
+        domains:
+          sigma.up:
+            id:                                                    1
+        from:                                                      null
+        gateway:                                                   null
+        interfaces:                                                []
+        ipam:                                                      none
+        mask:                                                      "255.255.255.128"
+        name:                                                      "public-a"
+        network:                                                   "10.70.13.0"
+        network_address:                                           "10.70.13.0/25"
+        network_type:                                              "IPv4"
+        parameters:                                                []
+        priority:                                                  null
+        tftp:                                                      null
+        vlanid:                                                    null
+    "public-b":
+      data:
+        boot_mode:                                                 "DHCP"
+        cidr:                                                      25
+        dhcp:                                                      null
+        dns:                                                       null
+        dns_primary:                                               null
+        dns_secondary:                                             null
+        domains:
+          sigma.up:
+            id:                                                    1
+        from:                                                      null
+        gateway:                                                   null
+        interfaces:                                                []
+        ipam:                                                      none
+        mask:                                                      "255.255.255.128"
+        name:                                                      "public-b"
+        network:                                                   "10.70.13.128"
+        network_address:                                           "10.70.13.128/25"
+        network_type:                                              "IPv4"
+        parameters:                                                []
+        priority:                                                  null
+        tftp:                                                      null
+        vlanid:                                                    null
+    "private-a":
+      data:
+        boot_mode:                                                 "DHCP"
+        cidr:                                                      21
+        dhcp:                                                      null
+        dns:                                                       null
+        dns_primary:                                               null
+        dns_secondary:                                             null
+        domains:
+          sigma.up:
+            id:                                                    1
+        from:                                                      null
+        gateway:                                                   null
+        interfaces:                                                []
+        ipam:                                                      none
+        mask:                                                      "255.255.248.0"
+        name:                                                      "private-a"
+        network:                                                   "172.24.0.0"
+        network_address:                                           "172.24.0.0/21"
+        network_type:                                              "IPv4"
+        parameters:                                                []
+        priority:                                                  null
+        tftp:                                                      null
+        vlanid:                                                    null
+    "private-b":
+      data:
+        boot_mode:                                                 "DHCP"
+        cidr:                                                      21
+        dhcp:                                                      null
+        dns:                                                       null
+        dns_primary:                                               null
+        dns_secondary:                                             null
+        domains:
+          sigma.up:
+            id:                                                    1
+        from:                                                      null
+        gateway:                                                   null
+        interfaces:                                                []
+        ipam:                                                      none
+        mask:                                                      "255.255.248.0"
+        name:                                                      "private-b"
+        network:                                                   "172.24.8.0"
+        network_address:                                           "172.24.8.0/21"
+        network_type:                                              "IPv4"
+        parameters:                                                []
+        priority:                                                  null
+        tftp:                                                      null
+        vlanid:                                                    null
+

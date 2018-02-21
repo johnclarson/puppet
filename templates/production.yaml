@@ -1,0 +1,43 @@
+---
+
+base::resolv::nameservers:
+  - IPAMASTER
+  - IPASLAVE
+
+base::resolv::search_domains:
+  - "%{::sigma_tld}"
+
+cloudera::master:                                                "c-sao-1.%{::sigma_tld}"
+cloudera::ssh_authorized_keys:
+  'root@production':
+     user:                                                       'root'
+     type:                                                       'ssh-rsa'
+     key:                                                        'xxxxxxx'
+
+
+foreman::foreman_url:                                            "https://PROVHOST.%{::sigma_tld}"
+
+guacamole::ldap-hostname:                                        'x.x.x.x'
+
+ivxsrvcp::domain:                                                'xxxxxxx'
+ivxsrvcp::executable_file:                                       'xxxxxxx'
+
+jts_server::binary:                                              'xxxxxx'
+jts_server::sftp_user:                                           'xxxxxx'
+jts_server::sftp_password_hash:                                  'xxxxxx'
+jts_server::sftp_ip:                                             'xxxxxx'
+jts_server::sftp_destination_path:                               'xxxxxx'
+
+ntp::servers:
+  - IPAMASTER
+  - IPASLAVE
+
+repo_server::web_server::vhosts:
+  software.%{::sigma_tld}:
+    ip:                                                          'x.x.x.x'
+    port:                                                        80
+    docroot:                                                     '/data/software'
+    docroot_mode:                                                '0775'
+    docroot_group:                                               'developers'
+    serveraliases:
+      - software

@@ -1,0 +1,63 @@
+---
+
+classes:
+  - profiles::orchestration_server
+
+base::packages:
+  - awscli
+  - python-requests
+  - python-requests-kerberos
+  - python-requests-oauthlib
+  - jq
+base::repos:
+  sigma-oracle-java:
+    yum_uri:                                                       "sigma-oracle-java"
+  sigma-rundeck:
+    yum_uri:                                                       "sigma-rundeck"
+
+java::package:                                                     "jdk1.8.0_112"
+
+rundeck_server::acl_policies:
+  rundeck_admins:
+    aclpolicy_description:                                         'Rundeck Admin ACL - All Access'
+    aclpolicy_project_name:                                        "'.*'"
+    aclpolicy_project_resources:
+      event:                                                       "'*'"
+      job:                                                         "'*'"
+      node:                                                        "'*'"
+    aclpolicy_project_adhoc:                                       "'*'"
+    aclpolicy_project_job:                                         "'*'"
+    aclpolicy_project_nodes:                                       "'.*'"
+    aclpolicy_project_nodes_allow:                                 "'*'"
+    aclpolicy_project_groups:                                      "[rundeck_admins]"
+    aclpolicy_application_resources:
+      job:                                                         "'*'"
+      project:                                                     "'*'"
+      system:                                                      "'*'"
+    aclpolicy_application_project:                                 "'*'"
+    aclpolicy_application_project_acl:                             "'*'"
+    aclpolicy_application_storage:                                 "'*'"
+rundeck_server::acl_policies_disabled:                             {}
+rundeck_server::admin_username:                                    "admin"
+rundeck_server::admin_password:                                    "CRYPT:ad8r0Ti6/W5t."
+rundeck_server::bind_url:                                          "ldap://ipa.%{::sigma_tld}:389"
+rundeck_server::bind_user_dn:                                      "cn=users,cn=accounts,%{::sigma_basedn}"
+rundeck_server::bind_role_dn:                                      "cn=groups,cn=accounts,%{::sigma_basedn}"
+rundeck_server::url:                                               "http://rundeck.%{::sigma_tld}/"
+rundeck_server::project_resources_file:                            "/etc/rundeck/resources.xml"
+rundeck_server::hostname:                                          "rundeck.%{::sigma_tld}"
+rundeck_server::port:                                              "4440"
+
+web_server::vhosts:
+  "rundeck.%{::sigma_tld}":
+    default_vhost:                                                 true
+    port:                                                          80
+    docroot:                                                       "/var/www/html"
+    proxy_pass:
+      - /:
+        path:                                                      "/"
+        url:                                                       "http://localhost:4440/"
+        reverse_urls:
+          - "http://localhost:4440/"
+        proxy_preserve_host:                                       true
+

@@ -1,0 +1,57 @@
+---
+
+classes:
+  - profiles::repo_server
+
+apache::ip:                                                    '172.24.0.189'
+
+base::repos:
+  sigma-gitlab:
+    yum_uri:                                                   "sigma-gitlab"
+  sigma-custom:
+    yum_uri:                                                   "sigma-custom"
+
+gitlab::external_url:                                          "https://gitlab.%{::sigma_tld}"
+gitlab::git_data_dir:                                          '/data/gitlab/git-data'
+gitlab::gitlab_rails:
+  time_zone:                                                   'EST5EDT'
+  gitlab_email_enabled:                                        false
+  gitlab_default_theme:                                        4
+  gitlab_email_display_name:                                   'Gitlab'
+  ldap_enabled:                                                true
+  ldap_servers:
+    myldapserver:
+      label:                                                   'Sigma LDAP'
+      host:                                                    "ipa.%{::sigma_tld}"
+      port:                                                    389
+      uid:                                                     'uid'
+      method:                                                  'plain' # "tls" or "ssl" or "plain"
+      bind_dn:                                                 ''
+      password:                                                ''
+      active_directory:                                        false
+      allow_username_or_email_login:                           false
+      block_auto_created_users:                                false
+      base:                                                    "%{::sigma_basedn}"
+      group_base:                                              "cn=groups,cn=accounts,%{::sigma_basedn}"
+      user_filter:                                             ''
+  omniauth_enabled:                                            true
+  omniauth_allow_single_sign_on:                               [ 'kerberos' ]
+  kerberos_enabled:                                            true
+  kerberos_keytab:                                             '/etc/http.keytab'
+  shared_path:                                                 '/data/gitlab/gitlab-rails/shared'
+  registry_path:                                               '/data/gitlab/gitlab-rails/shared/registry'
+gitlab::manage_package_repo:                                   false
+gitlab::nginx:
+  listen_addresses:                                            [ "%{::ipaddress}" ]
+  redirect_http_to_https:                                      true
+  ssl_certificate:                                             "/etc/pki/tls/certs/gitlab.%{::sigma_tld}.crt"
+  ssl_certificate_key:                                         "/etc/pki/tls/private/gitlab.%{::sigma_tld}.key"
+gitlab::registry_external_url:                                 "https://gitlab.%{::sigma_tld}:4567"
+gitlab::registry_nginx:
+  ssl_certificate:                                             "/etc/pki/tls/certs/gitlab.%{::sigma_tld}.crt"
+  ssl_certificate_key:                                         "/etc/pki/tls/private/gitlab.%{::sigma_tld}.key"
+gitlab::sidekiq:
+  shutdown_timeout:                                            5
+
+web_server::config_source:                                     'repo_server'
+

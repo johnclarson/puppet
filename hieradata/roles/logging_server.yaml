@@ -1,0 +1,12 @@
+---
+classes:
+  - profiles::logging_server
+
+
+base::repos:
+  sigma-cloudera-manager-5.10.0-el7:
+    yum_uri:                                                     sigma-cloudera-manager-5.10.0-el7
+
+rsyslog::config_prefix:                                     logging_server
+rsyslog::server:                                            true
+

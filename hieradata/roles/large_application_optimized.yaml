@@ -1,0 +1,12 @@
+---
+classes:
+  - profiles::large_application_optimized
+
+base::repos:
+  sigma-cloudera-manager-5.10.0-el7:
+    yum_uri:                                                     sigma-cloudera-manager-5.10.0-el7
+  sigma-oracle-java:
+    yum_uri:                                                     sigma-oracle-java
+  sigma-custom:
+    yum_uri:                                                     sigma-custom
+

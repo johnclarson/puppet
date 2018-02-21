@@ -1,0 +1,27 @@
+---
+classes:
+  - profiles::mesos_master
+
+base::repos:
+  sigma-mesosphere:
+    yum_uri:                                                 mesosphere
+
+mesos::master:                                               true
+mesos::cluster:                                              Sigma-dev
+mesos::packages:
+  - mesos
+  - marathon
+
+docker::extra_parameters:
+  - --cluster-store=zk://c-sao-1.pdev.%{::sigma_tld}:2181/docker-cluster-store
+  - --cluster-advertise=eth0:2376
+
+docker::run_instance::instance:
+  stitch:
+    image:                                                   gitlab.%{::sigma_tld}:4567/sigma/stitch
+    net:                                                     host
+    privileged:                                              true
+    memory_limit:                                            128m
+    volumes:                                                 ['/etc/docker:/etc/docker','/etc/stitch:/etc/stitch']
+    pull_on_start:                                           true
+    restart_service:                                         true

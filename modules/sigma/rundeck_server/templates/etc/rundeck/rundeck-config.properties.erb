@@ -1,0 +1,37 @@
+#loglevel.default is the default log level for jobs: ERROR,WARN,INFO,VERBOSE,DEBUG
+loglevel.default=INFO
+rdeck.base=/var/lib/rundeck
+
+#rss.enabled if set to true enables RSS feeds that are public (non-authenticated)
+rss.enabled=false
+grails.serverURL=<%= @rundeck_server_url %>
+dataSource.dbCreate = update
+dataSource.url = <%= @rundeck_server_database_url %>
+<% if @rundeck_server_database_username && @rundeck_server_database_username != "" -%>
+dataSource.username = <%= @rundeck_server_database_username %>
+<% end -%>
+<% if @rundeck_server_database_password && @rundeck_server_database_password != "" -%>
+dataSource.password = <%= @rundeck_server_database_password %>
+<% end -%>
+<% if @rundeck_server_database_driver && @rundeck_server_database_driver == "mysql" -%>
+dataSource.driverClass = com.mysql.jdbc.Driver
+
+# Enable database storage for project configuration
+rundeck.projectsStorageType = db
+
+# Enable encryption for project configuration storage
+rundeck.config.storage.converter.1.type = jasypt-encryption
+rundeck.config.storage.converter.1.path = projects
+rundeck.config.storage.converter.1.config.password = rundecksecret
+
+# Enable database for key storage
+rundeck.storage.provider.1.type = db
+rundeck.storage.provider.1.path = keys
+
+# Enable encryption for key storage
+rundeck.storage.converter.1.type = jasypt-encryption
+rundeck.storage.converter.1.path = projects
+rundeck.storage.converter.1.config.password = rundecksecret
+
+<% end -%>
+

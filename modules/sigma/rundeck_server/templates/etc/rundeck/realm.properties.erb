@@ -1,0 +1,13 @@
+##
+##  To generate passwords for static Rundeck user accounts, use the following java command on the rundeck server (u/n: foo; p/w: bar):
+##
+##  java -cp /var/lib/rundeck/bootstrap/jetty-all-7.6.0.v20120127.jar org.eclipse.jetty.util.security.Password foo bar
+##
+##     bar
+##     OBF:1v1r1ri71v2n
+##     MD5:37b51d194a7513e45b56f6524f2d51f2
+##     CRYPT:foXrpAKGo3142
+##
+<%= @rundeck_server_admin_username %>:<%= @rundeck_server_admin_password %>,user,admin,architect,deploy,build
+#@jetty.user.deploy.name@:@jetty.user.deploy.password@,user,deploy
+#@jetty.user.build.name@:@jetty.user.build.password@,user,build

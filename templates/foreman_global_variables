@@ -1,0 +1,7 @@
+enable-puppetlabs-pc1-repo:true
+freeipa_mkhomedir:false
+freeipa_opts:--request-cert
+freeipa_register_host:true
+install_yum_updates:true
+puppet_ca_server:puppet-ca
+puppet_server:puppet

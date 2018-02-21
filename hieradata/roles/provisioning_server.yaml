@@ -1,0 +1,79 @@
+---
+
+classes:
+  - profiles::provisioning_server
+
+base::repos:
+  sigma-foreman-1.13:
+    yum_uri:                                                       sigma-foreman-1.13
+  sigma-foreman-plugins-1.13:
+    yum_uri:                                                       sigma-foreman-plugins-1.13
+  sigma-custom:
+    yum_uri:                                                       sigma-custom
+
+limits::fragment:
+
+ "*/soft/nofile":
+   value:                                                          '16384'
+ "*/hard/nofile":                                              
+   value:                                                          '16384'
+
+ "*/soft/nproc":
+   value:                                                          '16384'
+ "*/hard/nproc":                                              
+   value:                                                          '16384'
+
+ntp::servers:
+  - 0.centos.pool.ntp.org
+  - 1.centos.pool.ntp.org
+  - 2.centos.pool.ntp.org
+  - 3.centos.pool.ntp.org
+
+puppet::autosign_hosts:
+  - "*.%{sigma_tld}"
+puppet::config_sections:
+  main:
+    vardir:                           '/opt/puppetlabs/puppet/cache'
+    logdir:                           '/var/log/puppetlabs/puppet'
+    rundir:                           '/var/run/puppetlabs'
+    ssldir:                           '/etc/puppetlabs/puppet/ssl'
+    privatekeydir:                    '$ssldir/private_keys { group = service }'
+    certname:                         "%{::fqdn}"
+    hostprivkey:                      '$certdir/$certname.pem { mode = 640 }'
+    hostprivkey:                      '$privatekeydir/$certname.pem { mode = 640 }'
+    show_diff:                        'false'
+    reports:                          'foreman'
+    environmentpath:                  '/etc/puppetlabs/code/environments'
+    basemodulepath:                   '/etc/puppetlabs/code/environments/common:/etc/puppetlabs/code/modules:/opt/puppetlabs/puppet/modules'
+    hiera_config:                     '$confdir/hiera.yaml'
+    ca_server:                        'puppet-ca'
+  agent:
+    classfile:                        '$statedir/classes.txt'
+    localconfig:                      '$vardir/localconfig'
+    default_schedules:                'false'
+    report:                           'true'
+    pluginsync:                       'true'
+    masterport:                       '8140'
+    environment:                      "%{::puppet_environment}"
+    server:                           'puppet'
+    listen:                           'false'
+    splay:                            'false'
+    splaylimit:                       '1800'
+    runinterval:                      '1800'
+    noop:                             'false'
+    usecacheonfailure:                'true'
+  master:
+    autosign:                         '/etc/puppetlabs/puppet/autosign.conf { mode = 0664 }'
+    external_nodes:                   '/etc/puppetlabs/puppet/node.rb'
+    node_terminus:                    'exec'
+    ca:                               'true'
+    ssldir:                           '/etc/puppetlabs/puppet/ssl'
+    certname:                         'puppet'
+    parser:                           'current'
+    strict_variables:                 'false'
+puppet::enable_ca:                    true
+puppet::master:                       true
+puppet::packages:
+  - puppet
+  - puppetserver
+

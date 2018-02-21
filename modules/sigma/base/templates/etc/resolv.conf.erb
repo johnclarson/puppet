@@ -1,0 +1,5 @@
+domain <%= @base_resolv_domain %>
+search <% @base_resolv_search_subdomains.each do |domain| %><%= domain %> <% end %>
+<% @base_resolv_nameservers.each do |nameserver| -%>
+nameserver <%= nameserver %>
+<% end -%>

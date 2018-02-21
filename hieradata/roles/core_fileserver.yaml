@@ -1,0 +1,10 @@
+---
+
+classes:
+  - profiles::core_fileserver
+
+
+base::repos:
+  sigma-elrepo:
+    yum_uri:                                                   "sigma-elrepo"
+

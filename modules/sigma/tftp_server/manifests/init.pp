@@ -1,0 +1,2 @@
+class tftp_server {
+}

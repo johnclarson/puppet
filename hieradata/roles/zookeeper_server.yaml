@@ -1,0 +1,9 @@
+---
+classes:
+  - profiles::zookeeper_server
+
+base::repos:
+  sigma-cdh-5.8.2:
+    yum_uri:                                                 cdh-5.8.2
+
+zookeeper::max_client_conns:                                 60

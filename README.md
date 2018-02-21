@@ -1,1 +1,1 @@
-# puppet
+Sigma Puppet Repository

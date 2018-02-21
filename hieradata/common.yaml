@@ -1,0 +1,182 @@
+---
+
+classes:
+  - profiles::base
+
+base::default_service_home:                                        /usr/local/home
+base::disabled_service_accounts:
+  ftp:
+    uid:                                                           14
+  games:
+    uid:                                                           12
+  rundeckorch:
+    uid:                                                           52003
+base::disabled_service_groups:
+  ftp:
+    gid:                                                           50
+  games:
+    gid:                                                           20
+base::java_keystores:
+  puppetca_truststore:
+    certificate:                                                   /etc/puppetlabs/puppet/ssl/certs/ca.pem
+    target:                                                        /etc/puppetlabs/puppet/ssl/jks/puppetca.jks
+  "%{::fqdn}_keystore":
+    certificate:                                                   /etc/puppetlabs/puppet/ssl/certs/%{::fqdn}.pem
+    private_key:                                                   /etc/puppetlabs/puppet/ssl/private_keys/%{::fqdn}.pem
+    target:                                                        /etc/puppetlabs/puppet/ssl/jks/%{::fqdn}.jks
+base::motd:                                                        Welcome to Sigma!
+base::packages:
+  - authconfig
+  - bind-utils
+  - git
+  - man-pages
+  - mlocate
+  - rsync
+  - strace
+  - vim-enhanced
+  - uuid-devel
+  - lvm2
+base::repos:
+  sigma-centos-%{::operatingsystemmajrelease}:
+    yum_uri:                                                       sigma-centos-%{::operatingsystemmajrelease}
+  sigma-dockerrepo:
+    yum_uri:                                                       sigma-dockerrepo
+  sigma-epel:
+    yum_uri:                                                       sigma-epel
+  sigma-puppetlabs-el7:
+    yum_uri:                                                       sigma-puppetlabs-el7
+base::resolv::domain:                                              "%{::sigma_tld}"
+base::resolv::search_subdomains:
+  - "%{::sigma_tld}"
+#base::root_password:                                               "!!"
+base::sshd_config_lines:
+  - "AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES"
+  - "AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE"
+  - "AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT"
+  - "AcceptEnv XMODIFIERS"
+  - "AuthorizedKeysCommandUser nobody"
+  - "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys"
+  - "AuthorizedKeysFile .ssh/authorized_keys"
+  - "Banner /etc/ssh/ssh_banner"
+  - "ChallengeResponseAuthentication no"
+  - "GatewayPorts no"
+  - "GSSAPIAuthentication yes"
+  - "GSSAPICleanupCredentials no"
+  - "HostbasedAuthentication no"
+  - "HostKey /etc/ssh/ssh_host_ecdsa_key"
+  - "HostKey /etc/ssh/ssh_host_ed25519_key"
+  - "HostKey /etc/ssh/ssh_host_rsa_key"
+  - "IgnoreRhosts yes"
+  - "KerberosAuthentication no"
+  - "LogLevel info"
+  - "MACs hmac-sha1,umac-64@openssh.com,hmac-ripemd160"
+  - "MaxAuthTries 3"
+  - "PasswordAuthentication yes"
+  - "PermitEmptyPasswords no"
+  - "PermitRootLogin yes"
+  - "PermitUserEnvironment no"
+  - "PrintLastLog yes"
+  - "PubkeyAuthentication yes"
+  - "Subsystem sftp	internal-sftp"
+  - "SyslogFacility AUTHPRIV"
+  - "UsePAM yes"
+  - "UsePrivilegeSeparation sandbox"
+  - "X11Forwarding yes"
+base::timezone:                                                    EST5EDT
+
+cloudera::version:                                                 5.10.0
+
+docker::repo_opt:                                                  ''
+docker::use_upstream_package_source:                               false
+docker::manage_package:                                            true
+
+haproxy::defaults_options:
+  mode:                                                            'http'
+  log:                                                             'global'
+  retries:                                                         '3'
+  maxconn:                                                         '4000'
+  option:
+    - 'httplog'
+    - 'dontlognull'
+    - 'http-server-close'
+    - 'redispatch'
+  timeout:
+    - 'http-request 10s'
+    - 'queue 1m'
+    - 'connect 10s'
+    - 'client 1m'
+    - 'server 1'
+    - 'http-keep-alive 10s'
+    - 'check 10s'
+haproxy::global_options:
+  maxconn:                                                         '4000'
+  log:                                                             '127.0.0.1 local2'
+  chroot:                                                          '/var/lib/proxy'
+  user:                                                            'haproxy'
+  group:                                                           'haproxy'
+  stats:
+    - 'socket /var/lib/haproxy/stats'
+
+haproxy_server::listeners:
+  haproxy_stats:
+    mode:                                                          'http'
+    options:
+      stats:
+        - 'enable'
+        - 'uri /'
+        - 'hide-version'
+
+
+java::ackage:                                                      java-1.8.0-openjdk-headless
+
+keepalived_server::notification_email:                             "default@%{::sigma_tld}"
+keepalived_server::notification_email_from:                        "default@%{::sigma_tld}"
+keepalived_server::smtp_server:                                    "smtp.sigma.cia"
+keepalived_server::smtp_connect_timeout:                           "60"
+keepalived_server::router_id:                                      "router_instance_id"
+
+
+limits::fragment:
+ "*/soft/nofile":
+   value:                                                          '1024'
+ "*/hard/nofile":
+   value:                                                          '8192'
+
+logging_server::rsyslog::audit_forwarders:
+  - "local6.*               ?RemoteAudit;RemoteFormat"
+  - "local6.*               @@logger.%{::sigma_tld}:5150"
+logging_server::rsyslog::syslog_forwarders:
+  - "*.info;local6.none     @@logger.%{::sigma_tld}:5140"
+
+puppet::packages:
+  - puppet
+puppet::config_sections:
+  main:
+    ca_server:                                                     "puppet-ca"
+    logdir:                                                        "/var/log/puppetlabs/puppet"
+    rundir:                                                        "/var/run/puppetlabs"
+    ssldir:                                                        "/etc/puppetlabs/puppet/ssl"
+    vardir:                                                        "/opt/puppetlabs/puppet/cache"
+  agent:
+    pluginsync:                                                    "true"
+    report:                                                        "true"
+    ignoreschedules:                                               "true"
+    ca_server:                                                     "puppet-ca"
+    certname:                                                      "%{::fqdn}"
+    environment:                                                   "%{::puppet_environment}"
+    server:                                                        "puppet"
+
+rsyslog::audit_forwarders:
+  - "local6.*                    @@logger.%{::sigma_tld}:515"
+rsyslog::remote_server:                                            logger.%{::sigma_tld}
+rsyslog::server::allowed_networks:
+  - 172.24.0.0/16
+rsyslog::storage_path:                                             /data/rsyslog
+rsyslog::syslog_forwarders:
+  - "*.*                    @@logger.%{::sigma_tld}:514"
+
+tomcat::service::use_init:                                         true
+tomcat::service::service_name:                                     tomcat
+
+xrdp::name:                                                        Sigma Xvnc Login
+

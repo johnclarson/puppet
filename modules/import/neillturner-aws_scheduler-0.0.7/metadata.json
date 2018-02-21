@@ -1,0 +1,63 @@
+{
+  "name": "neillturner/aws_scheduler",
+  "version": "0.0.7",
+  "author": "Neill Turner",
+  "summary": "aws scheduler - stop and start server instances according to schedule and save on aws costs.",
+  "license": "Apache-2.0",
+  "source": "https://github.com/neillturner/puppet-aws_scheduler.git",
+  "project_page": "https://github.com/neillturner/puppet-aws_scheduler",
+  "issues_url": "https://github.com/neillturner/puppet-aws_scheduler/issues",
+  "description": "aws scheduler - stop and start server instances according to schedule and save on aws costs.",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "10.04",
+        "12.04",
+        "14.04"
+      ]
+    }
+  ],
+  "dependencies": [
+    {"name":"stahnma/epel"}
+  ]
+}

@@ -1,0 +1,88 @@
+---
+
+base::resolv::nameservers:
+  - 172.24.0.55
+  - 192.168.21.201
+
+base::resolv::search_subdomains:
+  - pdev.%{::sigma_tld}
+  - "%{::sigma_tld}"
+
+cloudera::cname:                                                 "c-sao-1.pdev.%{::sigma_tld}"                                               
+cloudera::master:                                                "c-sao-1.pdev.%{::sigma_tld}"                                               
+
+
+cloudera_manager::mgr_db_type:                                   'postgresql'
+cloudera_manager::mgr_db_setuptype:                              'EMBEDDED'
+cloudera_manager::mgr_db_host:                                   'localhost'
+cloudera_manager::mgr_db_port:                                   '7432'
+cloudera_manager::mgr_db_name:                                   'scm'
+cloudera_manager::mgr_db_user:                                   'scm'
+cloudera_manager::am_db_type:                                    'postgresql'
+cloudera_manager::am_db_host:                                    "c-sao-1.pdev.%{::sigma_tld}"
+cloudera_manager::am_db_port:                                    '7432'
+cloudera_manager::am_db_name:                                    'amon'
+cloudera_manager::am_db_user:                                    'amon'
+cloudera_manager::rm_db_type:                                    'postgresql'
+cloudera_manager::rm_db_host:                                    "c-sao-1.pdev.%{::sigma_tld}"
+cloudera_manager::rm_db_port:                                    '7432'
+cloudera_manager::rm_db_name:                                    'rman'
+cloudera_manager::rm_db_user:                                    'rman'
+cloudera_manager::nav_db_type:                                   'postgresql'
+cloudera_manager::nav_db_host:                                   "c-sao-1.pdev.%{::sigma_tld}"
+cloudera_manager::nav_db_port:                                   '7432'
+cloudera_manager::nav_db_name:                                   'nav'
+cloudera_manager::nav_db_user:                                   'nav'
+cloudera_manager::navms_db_type:                                 'postgresql'
+cloudera_manager::navms_db_host:                                 "c-sao-1.pdev.%{::sigma_tld}"
+cloudera_manager::navms_db_port:                                 '7432'
+cloudera_manager::navms_db_name:                                 'navms'
+cloudera_manager::navms_db_user:                                 'navms'
+
+cloudera::ssh_authorized_keys: 
+  'root@platform_development':
+     user:                                                       'root'
+     type:                                                       'ssh-rsa'
+     key:                                                        'AAAAB3NzaC1yc2EAAAADAQABAAABAQC+f6QcwFFzQ5RSekq0NIhlMd4EJgtktRtwif2Mp5gMKuyM0KsWkgvp1xYa4N/prurq5gxP+M/DuBXin2J4W4FhtSpTAoEbyFpCSDjXd8ffnlvWDmI8bM+HI5Hxuc+tYtPL/fyUkATGVt4PaQk9uaau735RW05rO5dEzDYwLQ3mBWjMBxjT/6Bvx20M6kTxc0tI8M/9rq6WsEpBypy4/Hw0p7IQZqhyVwLjBPxetT/Ljtex4M70rq4rjy3FuRjXgl7QzqcYErLhOGjRs1jSK+eUCj80cPsUN69QiVP0W5jmebWIXKt0CgDPpqh5c/nPvASZIYuFS+w4Z9sQakt4nQ9p'
+
+docker::docker_users:
+  - pschmerge
+  - apm
+  - segfault
+
+foreman::foreman_url:                                          "https://c-prov-1.%{::sigma_tld}"
+
+guacamole::ldap-hostname:                                      '172.24.0.55'
+
+ivxsrvcp::domain:                                                'SIGMA_DSCI'
+ivxsrvcp::executable_file:                                       'Linux_AIN2_6.10.9785.bin'
+
+ntp::servers:
+  - c-prov-1.%{::sigma_tld}
+  - 192.168.21.254
+
+repo_server::web_server::vhosts:
+  software.%{::sigma_tld}:
+    ip:                                                          '172.24.0.245'
+    port:                                                        80
+    docroot:                                                     '/data/software'
+    docroot_mode:                                                '0775'
+    docroot_group:                                               'developers'
+    serveraliases:
+      - software
+  yum.%{::sigma_tld}:
+    default_vhost:                                               true
+    ip:                                                          '172.24.0.245'
+    port:                                                        80
+    docroot:                                                     '/data/yum'
+    docroot_mode:                                                '0755'
+    serveraliases:
+      - yum
+
+rsyslog::logger_keytab:                                     '/etc/flume-ng/conf/flume_c-logger-1.sigma.dsci\@SIGMA.DSCI.keytab'
+rsyslog::logger_principal:                                  "flume/c-logger-1.sigma.dsci@SIGMA.DSCI"
+
+zookeeper::zk_servers:
+  - c-zk-sigma-1
+  - c-zk-sigma-2
+  - c-zk-sigma-3

@@ -1,0 +1,58 @@
+#!/bin/bash
+
+action=$1
+target=$2
+
+environment="production"
+if [[ "${target}" =~ \.dev\. ]]; then
+    environment="development"
+fi
+
+function usage ( ) {
+     echo "
+     Usage: $0 ACTION TARGET
+
+     Actions:
+         after_commit
+         create
+         destroy
+
+     Target:
+         FQDN
+"
+
+}
+
+if [ "${action}" == "" ]; then 
+    usage
+    echo "Please specify an action as the first argument to the script."
+    exit 1
+fi
+
+if [ "${target}" == "" ]; then 
+    usage
+    echo "Please specify the FQDN of the target as the second argument to the script."
+    exit 1
+fi
+
+case $action in 
+    after_commit)
+        echo "No action necessary."
+        exit 0
+        ;;
+    create)
+        echo "No action necessary."
+        exit 0
+        ;;
+    destroy)
+        echo "Revoking puppet certificate for ${target}..."
+        curl -k -X PUT -H 'Content-Type: test/pson' --data '{"desired_state":"revoked"}' https://puppet-ca:8140/${environment}/certificate_status/${target}
+        curl -k -X DELETE -H 'Accept: yaml' https://puppet-ca:8140/${environment}/certificate_status/${target}
+        exit 0
+        ;; 
+    *)
+        usage
+        echo "Unknown action: ${action}."
+        exit 1
+        ;;
+esac

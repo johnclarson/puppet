@@ -1,0 +1,103 @@
+#### MODULES ####
+
+$PreserveFQDN on
+$ModLoad imuxsock # provides support for local system logging (e.g. via logger command)
+$ModLoad imklog # provides kernel logging support (previously done by rklogd)
+#$ModLoad immark  # provides --MARK-- message capability
+
+<% if @rsyslog_server -%>
+# Provides UDP syslog reception
+#$ModLoad imudp
+#$UDPServerRun 514
+
+# Provides TCP syslog reception
+$ModLoad imtcp
+<% @rsyslog_server_tcp_ports.each do |port| -%>
+$InputTCPServerRun <%= port %>
+<% end -%>
+
+# Control who is allowed to send logs
+$AllowedSender TCP, 127.0.0.1<% @rsyslog_server_allowed_networks.each do |network| %>, <%= network %> <% end %>
+
+#### Start Templates ####
+$template RemoteAudit, "<%= @rsyslog_storage_path %>/%$YEAR%/%$MONTH%/%$DAY%/%$HOUR%/%HOSTNAME%/audit.log"
+$template RemoteSyslog, "<%= @rsyslog_storage_path %>/%$YEAR%/%$MONTH%/%$DAY%/%$HOUR%/%HOSTNAME%/system.log"
+$template RemoteFormat, "%msg%\n"
+
+#The following is used to drop messages after writing to filesystem, commented out when using flume to aggregate 
+#logs to kafka
+#if ($inputfiletag == 'tag_audit_log') then ?RemoteAudit
+#& ~
+#if ($syslogfacility-text != 'local6') then ?RemoteSyslog
+#& ~
+
+#### End Templates ####
+
+<% end -%>
+
+# Provides input file processing
+$ModLoad imfile
+
+#### GLOBAL DIRECTIVES ####
+
+# Use default timestamp format
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+
+# File syncing capability is disabled by default. This feature is usually not required,
+# not useful and an extreme performance hit
+#$ActionFileEnableSync on
+
+# Include all config files in /etc/rsyslog.d/
+$IncludeConfig /etc/rsyslog.d/*.conf
+
+#### RULES ####
+
+# Log all kernel messages to the console.
+# Logging much else clutters up the screen.
+#kern.*                                                 /dev/console
+
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages!
+*.*;mail.none;authpriv.none;cron.none;local6.none                /var/log/messages
+<% if @rsyslog_server -%>
+#Also duplicate messages to remote logging location for rsyslog server
+*.info;mail.none;authpriv.none;cron.none;local6.none                -?RemoteSyslog
+<% end -%>
+
+# The authpriv file has restricted access.
+authpriv.*                                              /var/log/secure
+
+# Log all the mail messages in one place.
+mail.*                                                  -/var/log/maillog
+
+
+# Log cron stuff
+cron.*                                                  /var/log/cron
+
+# Everybody gets emergency messages
+*.emerg                                                 :omusrmsg:*
+
+# Save news errors of level crit and higher in a special file.
+uucp,news.crit                                          /var/log/spooler
+
+# Save boot messages also to boot.log
+local7.*                                                /var/log/boot.log
+
+
+### begin forwarding rule ###
+<% @rsyslog_syslog_forwarders.each do |forward| -%>
+<%= forward %>
+<% end -%>
+### end of the forwarding rule ###
+
+### Start Audit Log Forward ###
+$InputFileName /var/log/audit/audit.log
+$InputFileTag tag_audit_log
+$InputFileStateFile audit_log
+$InputFileSeverity info
+$InputFileFacility local6
+$InputRunfileMonitor
+<% @rsyslog_audit_forwarders.each do |forward| -%>
+<%= forward %>
+<% end -%>
+### End Audit Log Forward ###

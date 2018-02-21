@@ -1,0 +1,20 @@
+---
+classes:
+  - profiles::collaboration_server
+
+ngircd::server_name:                                          irc.%{::sigma_tld}
+ngircd::bind_ips:
+  - 0.0.0.0
+ngircd::oper_can_use_mode:                                    yes
+ngircd::info:                                                 "Sigma IRC"
+ngircd::admin_email:                                          segfault@%{::sigma_tld}
+ngircd::motd:                                                 Tabs > Spaces
+ngircd::network:                                              SigmaDevPrivate
+ngircd::connect_retry:                                        70
+ngircd::ngircd_operators:
+  segfault:
+    password:                                                 SegFault    
+
+ngircd::ngircd_channels:
+  sigma-dev:
+    topic:                                                    Tabs > Spaces

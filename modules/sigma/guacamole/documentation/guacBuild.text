@@ -1,0 +1,154 @@
+#######################################
+#Request New Instance through Foreman #
+#######################################
+### UI Request for UC2S ####
+
+1. Hosts -> New Host
+2. Enter Name: <c-rdp-x>, select Host Group, select Deploy, accept defaults for remainder
+3. Interfaces Tab, select "edit", deselect "Provision", click "Ok"
+4. Operatin System Tab, select "centos7-sigma-desktop", click Submit
+
+### Command Line ####
+On the provisioning server, as yourself, enter the following command with appropriate variable:
+
+hammer host create --hostgroup-id 34 --compute-resource UC2S --operatingsystem-id 1 --image centos7-sigma-desktop --name c-rdpt-1
+
+puppet modules will be installed upon creation of instance, however, a manual puppet agent -t will need to occur
+to complete the installation. (Note: fix the install order down the road.)
+
+#### C2S (until foreman setup) ####
+
+1. Launch instance through C2S console, ensure using public subnet
+2. set hostname (/etc/hostname as FQDN)
+3. update /etc/cloud/cloud.cfg
+	* preserve_hostname: true
+4. register with IPA
+	* yum install ipa-client
+	*ipa-client-install --no-dns-sshfp --enable-dns-updates --mkhomedir
+5. configure yum repos:
+	wget https://yum.sigma.cia/sigma.repo -O /etc/yum.repos.d/sigma.repo
+	*may need to substitute ip for yum.sigma.cia withing repo.
+6. set facts files
+	* /facts/puppet_role.fact
+	* /facts/puppet_environment.fact
+	* /facts/sigma_tld.fact (sigma.?)
+	* /facts/sigma_basedn.fact (dc=sigma,dc=?)
+7. install puppet, configure, start
+	* yum install puppet-agent
+	* edit puppet.conf: 
+		[main]
+		environment = ?
+8. run puppet agent -t
+
+***set security group to expose the external IP
+***use elastic ip
+
+######################
+#### Add DNS Entry ###
+######################
+
+From the IPA server
+1. Network Service -> DNS -> DNS Zones
+2. Select zone, select Add, enter Record Name: guacamole, CNAME: <fqdn of server>, save
+
+##################################################
+# Setup for certificate in UC2S, from within the IPA UI: #
+##################################################
+
+1. create new host, no ip, name only
+  a. capture the Principal name from "Identity/Host Settings" for the cert being requested 
+
+2. create service using HTTP and hostname
+
+3. issue cert
+  a. go to Authentication/Certificates/ select Issue, enter Principal name and copy paste CSR into bottom
+     section and issue.
+
+4. copy cert contents to file on server, install to NSSDB, follow export steps
+
+5. restart tomcat
+
+##########################################
+# Working with NSS DB from the instance: #
+##########################################
+### obsolete use dans script/certmonger
+1. create db on server using:
+certutil -N -d <database path>
+
+2. create new CSR request:
+certutil -R -d <database path> -a -g <key size> -s 'CN=guacamole.sigma.dsci,O=SIGMA.DSCI'
+
+3. once signed cert is rec'd install it to the db:
+*Copy certificate info from IPA UI and replace in the certs/localhost.crt file on the server
+certutil -A -n guacamole.sigma.dsci -t u,u,u -d . -i <certname>
+
+4. verify its in the db:
+certutil -L -d .
+
+5. check that its associated with key:
+certutil -K -d .
+
+6. to export it from the db so that you can place cert and key separately:
+ a. pk12util -o guackey.p12 -n 'guacamole.sigma.dsci' -d .
+ b. openssl pkcs12 -in guackey.p12 -out gauc.key -nodes (to extract the private key)
+
+7. place key in location that apache is looking for, /private/localhost.key
+
+###################################################
+# Update freeIPA directory schema from IPA server #
+###################################################
+
+###Create ldif file containing the below entries and use "ldapadd -ZZ -x -D "cn=Directory Manager" -W  -H ldap://localhost -f /tmp/guacd.ldif"
+
+dn: cn=schema
+changetype: modify
+add: attributeTypes
+attributeTypes: ( 1.3.6.1.4.1.38971.1.1.1 NAME 'guacConfigProtocol'
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+dn: cn=schema
+changetype: modify
+add: attributeTypes
+attributeTypes: ( 1.3.6.1.4.1.38971.1.1.2 NAME 'guacConfigParameter'
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+dn: cn=schema
+changetype: modify
+add: objectClasses
+objectClasses: ( 1.3.6.1.4.1.38971.1.2.1 NAME 'guacConfigGroup' DESC 'Guacamole configuration group' SUP groupOfNames MUST guacConfigProtocol MAY guacConfigParameter  )
+
+#### Add ACI for new object and attributes, create ldif file and user ldapadd command. ####
+
+dn: cn=groups,cn=accounts,dc=sigma,dc=dsci
+changetype: modify
+add: aci
+aci: (targetattr="guacConfigProtocol || guacConfigParameter")(targetfilter = "(objectclass=guacConfigGroup)") (version 3.0; acl "permission:System: guac-privs"; allow (compare,read,search) userdn = "ldap:///all";)
+
+
+###########################################################
+# Add ldap entry for Guac connections from the IPA server #
+###########################################################
+
+dn: cn=sirbaum_rdp,cn=groups,cn=accounts,dc=sigma,dc=dsci
+objectClass: guacConfigGroup
+objectClass: groupOfNames
+objectClass: ipausergroup
+objectClass: nestedgroup
+objectClass: ipaobject
+cn: sirbaum_rdp
+guacConfigProtocol: rdp
+guacConfigParameter: hostname=c-sandbox-sirbaum.pdev.sigma.dsci
+guacConfigParameter: port=3389
+member: uid=marzipan,cn=users,cn=accounts,dc=sigma,dc=dsci
+
+#### Add new members via ldif or through IPA UI.
+
+dn: cn=jponz_rdp,cn=groups,cn=accounts,dc=sigma,dc=dsci
+changetype: modify
+add: member
+member: uid=jopo,cn=users,cn=accounts,dc=sigma,dc=dsci
+
+
+
+
+

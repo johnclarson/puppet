@@ -1,0 +1,38 @@
+---
+
+config_name:                        <%= @config_name %>
+region:                             <%= @region %>
+source_ami:                         <%= @source_ami %>
+instance_type:                      <%= @instance_type %>
+security_group:                     <%= @security_group %>
+subnet:                             <%= @subnet %>
+name:                               <%= @name %>
+rootuser:                           <%= @rootuser %>
+ami_name:                           <%= @ami_name %>
+ami_description:                    <%= @ami_description %>
+
+Disks:
+<% @disks.sort.each do |key,value| -%>
+    <%= key %>:                      <%= value %>
+<% end %>
+
+Packages:
+<% @packages.sort.each do |package| -%>
+    - <%= package %>
+<% end -%>
+
+PackageGroups: 
+<% @package_groups.sort.each do |package_group| -%>
+    - "<%= package_group %>"
+<% end -%>
+
+Repos:
+<% @repos.sort.each do |repo| -%>
+    <%= repo %>:
+        baseurl:                        http://<%= @yum_host %>/<%= repo %>
+<% end -%>
+
+CommandFiles: 
+<% @commands.each do |command| -%>
+    - <%= command %>
+<% end -%>

@@ -1,0 +1,68 @@
+---
+classes:
+  - profiles::remote_desktop_gateway
+
+guacamole::ldap-port:                   389
+guacamole::ldap-user-base-dn:           cn=users,cn=accounts,%{::sigma_basedn}
+guacamole::ldap-group-base:             cn=groups,cn=accounts,%{::sigma_basedn}
+guacamole::ldap-config-base-dn:         cn=groups,cn=accounts,%{::sigma_basedn}
+guacamole::packages:
+  - cairo
+  - freerdp-libs
+  - libogg
+  - libvorbis
+  - freerdp
+
+tomcat_server::connectors:
+  tomcat-http:                          {}
+tomcat_server::instances:
+  tomcat:                               {}
+tomcat_server::packages:
+  - tomcat
+  - tomcat-lib
+tomcat_server::servers:
+  tomcat:                               {}
+
+web_server::modules_builtin:
+  ssl:                                  {}
+  proxy:                                {}
+remote_desktop_gateway::web_server::vhosts:
+  guacamole.%{::sigma_tld}_ssl:
+    default_vhost:                      true
+    servername:                         'guacamole.%{::sigma_tld}'
+    port:                               443
+    redirect_source:                    
+        - 'permanent /'
+        - 'permanent /guacamole'
+    redirect_dest:                      
+        - 'https://guacamole.%{::sigma_tld}/guacamole/'
+        - 'https://guacamole.%{::sigma_tld}/guacamole/'
+    docroot:                            /var/www/html
+    options:
+        - FollowSymLinks 
+        - MultiViews
+    manage_docroot:                     false
+    ssl:                                true
+    ssl_cert:                           /etc/pki/tls/certs/localhost.crt
+    ssl_key:                            /etc/pki/tls/private/localhost.key
+    proxy_pass:                         { path: /guacamole/, url: 'http://guacamole.%{::sigma_tld}:8080/guacamole/' }
+    serveraliases:
+      - 'demo.%{::sigma_tld}'
+  guacamole.%{::sigma_tld}_nossl:
+    servername:                         'guacamole.%{::sigma_tld}'
+    port:                               80
+    redirect_source:                    
+        - 'permanent /'
+        - 'permanent /guacamole'
+    redirect_dest:                      
+        - 'https://guacamole.%{::sigma_tld}/guacamole/'
+        - 'https://guacamole.%{::sigma_tld}/guacamole/'
+    docroot:                            /var/www/html
+    options:
+        - FollowSymLinks 
+        - MultiViews
+    serveraliases:
+      - 'demo.%{::sigma_tld}'
+
+web_server::config_source:              'remote_desktop_gateway'
+

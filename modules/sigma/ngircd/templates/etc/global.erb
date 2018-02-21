@@ -1,0 +1,64 @@
+
+[Global]
+  Name = <%= @server_name %>.
+  AdminInfo1 = <%= @admin1 %>
+  AdminInfo2 = <%= @admin2 %>
+  AdminEMail = <%= @admin_email %>
+  Info = <%= @info %>
+  Listen = <% @bind_ips.each_with_index do |port, i| -%><%= port -%><%= ',' if i < (@bind_ips.size - 1) -%><% end %>
+  MotdPhrase = <%= @motd %>
+  Network = <%= @network %>
+  Password = <%= @password %>
+  PidFile = <%= @pid_file %>
+  Ports = <% @ports.each_with_index do |port, i| -%><%= port -%><%= ',' if i < (@ports.size - 1) -%><% end %>
+  HelpFile =
+  ServerUID = <%= @user %>
+  ServerGID = <%= @group %>
+
+[Limits]
+  ConnectRetry = <%= @connect_retry %>
+  IdleTimeout = <%= @idle_timeout %>
+  MaxConnections = <%= @max_connections %>
+  MaxConnectionsIP = <%= @max_connections_ip %>
+  MaxJoins = <%= @max_joins %>
+  MaxNickLength = <%= @max_nick_length %>
+  MaxListSize = <%= @max_list_size %>
+  PingTimeout = <%= @ping_timeout %>
+  PongTimeout =  <%= @pong_timeout %>
+
+[Options]
+  AllowedChannelTypes = <%= @allowed_channel_types %>
+  AllowRemoteOper = <%= @allow_remote_op %>
+  ChrootDir = <%= @chroot_dir %>
+  CloakHost = <%= @cloak_host %>
+  CloakHostModeX = <%= @cloak_host_modex %>
+  CloakHostSalt = <%= @cloak_host_salt %>
+  CloakUserToNick = <%= @cloak_user_to_nick %>
+  ConnectIPv4 = <%= @ipv4_str %>
+  ConnectIPv6 = <%= @ipv6_str %>
+  DefaultUserModes = <%= @user_modes %>
+  DNS = <%= @dns %>
+  ;Ident = <%= @ident %>
+  IncludeDir = <%= @conf_d %>
+  MorePrivacy = <%= @more_privacy %>
+  NoticeAuth = <%= @notice_auth %>
+  NoticeBeforeRegistration = <%= @notice_before_auth %>
+  OperCanUseMode = <%= @oper_can_use_mode %>
+  OperChanPAutoOp = <%= @oper_chan_p_autoop %>
+  OperServerMode = <%= @oper_server_mode %>
+  PAM = <%= @pam %>
+  PAMIsOptional = <%= @pam_is_optional %>
+  RequireAuthPing = no
+  ScrubCTCP = no
+  SyslogFacility = local5
+  WebircPassword =
+
+<%if @ssl -%>
+[SSL]
+  CertFile = <%= @certfile %>
+  CipherList = <%= @ciphers %>
+  DHFile = <%= @dhfile %>
+  KeyFile = <%= @keyfile %>
+  KeyFilePassword = <%= @keyfilepassword %>
+  Ports = <% @ssl_ports.each_with_index do |port, i| -%><%= port -%><%= ',' if i < (@ssl_ports.size - 1) -%><% end %>
+<% end -%>

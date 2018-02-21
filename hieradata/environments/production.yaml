@@ -1,0 +1,160 @@
+---
+
+base::resolv::nameservers:
+  - 172.24.0.55
+  - 192.168.21.201
+
+base::resolv::search_domains:
+  - dev.%{::sigma_tld}
+  - "%{::sigma_tld}"
+
+cloudera::master:                                                "c-sao-1.pdev.%{::sigma_tld}"
+cloudera::ssh_authorized_keys:
+  'root@production':
+     user:                                                       'root'
+     type:                                                       'ssh-rsa'
+     key:                                                        'AAAAB3NzaC1yc2EAAAADAQABAAABAQC+f6QcwFFzQ5RSekq0NIhlMd4EJgtktRtwif2Mp5gMKuyM0KsWkgvp1xYa4N/prurq5gxP+M/DuBXin2J4W4FhtSpTAoEbyFpCSDjXd8ffnlvWDmI8bM+HI5Hxuc+tYtPL/fyUkATGVt4PaQk9uaau735RW05rO5dEzDYwLQ3mBWjMBxjT/6Bvx20M6kTxc0tI8M/9rq6WsEpBypy4/Hw0p7IQZqhyVwLjBPxetT/Ljtex4M70rq4rjy3FuRjXgl7QzqcYErLhOGjRs1jSK+eUCj80cPsUN69QiVP0W5jmebWIXKt0CgDPpqh5c/nPvASZIYuFS+w4Z9sQakt4nQ9p'
+
+#docker::docker_users:
+#  - pschmerge
+#  - apm
+#  - segfault
+
+foreman::foreman_url:                                            "https://c-prov-1.%{::sigma_tld}"
+
+guacamole::ldap-hostname:                                        "c-ipa-1.sigma.dsci"
+ 
+ham::foreman_api_url:                                            "https://c-prov-1.%{::sigma_tld}/api"
+ham::foreman_template_location:                                  "/etc/sysconfig/foreman/templates"
+
+ivxsrvcp::domain:                                                'SIGMA_DSCI'
+ivxsrvcp::executable_file:                                       'Linux_AIN2_6.10.9785.bin'
+
+jts_server::binary:                                              'xxxxxx'
+jts_server::sftp_user:                                           'xxxxxx'
+jts_server::sftp_password_hash:                                  'xxxxxx'
+jts_server::sftp_ip:                                             'xxxxxx'
+jts_server::sftp_destination_path:                               'xxxxxx'
+
+ntp::servers:
+  - c-prov-1.%{::sigma_tld}
+  - 192.168.21.254
+
+repo_server::web_server::vhosts:
+  software.%{::sigma_tld}:
+    ip:                                                          '172.24.0.189'
+    port:                                                        80
+    docroot:                                                     '/data/software'
+    docroot_mode:                                                '0775'
+    docroot_group:                                               'developers'
+    serveraliases:
+      - software
+  yum.%{::sigma_tld}:
+    default_vhost:                                               true
+    ip:                                                          '172.24.0.189'
+    port:                                                        80
+    docroot:                                                     '/data/yum'
+    docroot_mode:                                                '0755'
+    serveraliases:
+      - yum
+
+rsyslog::logger_keytab:                                     '/etc/flume-ng/conf/flume_c-logger-1.sigma.dsci\@SIGMA.DSCI.keytab'
+rsyslog::logger_principal:                                  "flume/c-logger-1.sigma.dsci@SIGMA.DSCI"
+
+ami_builder::configs:
+  sigma-centos-7-base:
+    config_name:                        sigma-centos-7-base
+    region:                             us-east-1
+    source_ami:                         ami-6fe8e878
+    instance_type:                      t2.small
+    security_group:                     sg-703d1c0f
+    subnet:                             subnet-9952fcd0
+    name:                               "Sigma CentOS 7 base AMI build"
+    rootuser:                           root
+    ami_name:                           sigma-centos-7-base
+    ami_description:                    "Sigma CentOS 7 core server build"
+    packages:
+      - awscli
+      - wget
+      - lvm2
+      - puppet
+      - ipa-client
+    disks:
+      sda1:                            100
+      sdb:                             100
+    repos:
+      - sigma-centos-7
+      - sigma-epel
+      - sigma-puppetlabs-el7
+    commands:
+      - manage_var
+      - disable_selinux
+
+  sigma-centos-7-desktop:
+    config_name:                        sigma-centos-7-desktop
+    region:                             us-east-1
+    source_ami:                         ami-6fe8e878
+    instance_type:                      t2.small
+    security_group:                     sg-703d1c0f
+    subnet:                             subnet-9952fcd0
+    name:                               "Sigma CentOS 7 desktop AMI build"
+    rootuser:                           root
+    ami_name:                           sigma-centos-7-desktop
+    ami_description:                    "Sigma CentOS 7 core desktop build"
+    packages:
+      - lvm2
+      - awscli
+      - wget
+      - puppet
+      - ipa-client
+    package_groups:
+      - Server with GUI
+      - GNOME Desktop
+    disks:
+      sda1:                            100
+      sdb:                             100
+    repos:
+      - sigma-centos-7
+      - sigma-epel
+      - sigma-puppetlabs-el7
+    commands:
+      - manage_var
+      - disable_selinux
+      - disable_firewalld
+      - set_graphical_target
+
+  sigma-centos-7-ssdo:
+    config_name:                        sigma-centos-7-ssdo
+    region:                             us-east-1
+    source_ami:                         ami-6fe8e878
+    instance_type:                      d2.xlarge
+    security_group:                     sg-703d1c0f
+    subnet:                             subnet-9952fcd0
+    name:                               "Sigma CentOS 7 ssdo AMI build"
+    rootuser:                           root
+    ami_name:                           sigma-centos-7-ssdo
+    ami_description:                    "Sigma CentOS 7 core server with ephemeral drives attached"
+    packages:
+      - lvm2
+      - awscli
+      - wget
+      - puppet
+      - ipa-client
+    disks:
+      sda1:                            100
+      sdb:                             100
+      sdc:                             ephemeral0
+      sdd:                             ephemeral1
+      sde:                             ephemeral2
+    repos:
+      - sigma-centos-7
+      - sigma-epel
+      - sigma-puppetlabs-el7
+    commands:
+      - manage_var
+      - disable_selinux
+
+#zookeeper::zk_servers:
+#  - c-zk-sigma-1
+#  - c-zk-sigma-2
+#  - c-zk-sigma-3

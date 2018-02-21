@@ -1,0 +1,6 @@
+<% @puppet_config_sections.sort.each do |section,attributes| -%>
+[<%= section %>]
+<% attributes.sort.each do |attribute,value| -%>
+    <%= attribute %> = <%= value %>
+<% end -%>
+<% end -%>

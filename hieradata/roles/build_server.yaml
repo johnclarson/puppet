@@ -1,0 +1,84 @@
+---
+
+classes:
+  - profiles::build_server
+
+base::packages:
+  - docker-engine
+  - gcc
+  - gcc-c++
+  - openssl-devel
+  - readline-devel
+  - sqlite-devel
+base::repos:
+  sigma-oracle-java:
+    yum_uri:                                                       /sigma-oracle-java
+
+java::package:                                                     jdk1.8.0_112
+
+jenkins_server::plugins:
+  - ansicolor.hpi
+  - copyartifact.hpi
+  - credentials.hpi
+  - display-url-api.hpi
+  - emma.hpi
+  - git.hpi
+  - git-client.hpi
+  - greenballs.hpi
+  - instant-messaging.hpi
+  - jabber.hpi
+  - javadoc.hpi
+  - jira.hpi
+  - jobConfigHistory.hpi
+  - junit.hpi
+  - mailer.hpi
+  - matrix-project.hpi
+  - maven-plugin.hpi
+  - promoted-builds.hpi
+  - rake.hpi
+  - ruby.hpi
+  - rubyMetrics.hpi
+  - rundeck.hpi
+  - scm-api.hpi
+  - script-security.hpi
+  - selenium.hpi
+  - ssh-credentials.hpi
+  - structs.hpi
+  - workflow-scm-step.hpi
+  - workflow-step-api.hpi
+
+maven::version:                                                    apache-maven-3.3.9
+
+nodejs::version:                                                   node-v7.0.0-linux-x64
+
+ruby::version:                                                     ruby-2.3.1
+
+tomcat_server::connectors:
+  tomcat-http:                                                     {}
+tomcat_server::instances:
+  tomcat:                                                          {}
+tomcat_server::packages:
+  - tomcat
+  - tomcat-lib
+tomcat_server::servers:
+  tomcat:                                                          {}
+tomcat_server::wars:
+  jenkins.war:
+    war_source:                                                    http://software.%{::sigma_tld}/jenkins/jenkins.war
+
+web_server::vhosts:
+  "jenkins.%{::sigma_tld}":
+    default_vhost:                                                 true
+    port:                                                          80
+    docroot:                                                       "/var/www/html"
+    proxy_pass:
+      - /jenkins/:
+        path:                                                      "/jenkins/"
+        url:                                                       "http://localhost:8080/jenkins/"
+        reverse_urls:
+          - "http://localhost:8080/jenkins/"
+        proxy_preserve_host:                                       true
+    redirect_source:
+        - 'permanent /'
+    redirect_dest:
+        - '/jenkins/'

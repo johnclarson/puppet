@@ -1,0 +1,18 @@
+<%= @data.to_json %>
+
+{
+    "compute_profile_id": <%= @compute_profile_id %>,
+    "compute_resource_id": <%= @compute_resource_id %>,
+    "compute_attribute": {
+        "vm_attrs": {
+            "availability_zone": "<%= @availability_zone %>",
+            "flavor_id": "<%= @flavor_id %>",
+            "image_id": "<%= @image_id %>",
+            "managed_ip": "<%= @managed_ip %>",
+            "security_group_ids": [ 
+              <% @security_group_ids.each_with_index do |sgid, i| -%>"<%= sgid -%>"<%= ',' if i < (@security_group_ids.size - 1) -%><% end %>
+            ],
+            "subnet_id": "<%= @subnet_id %>"
+        }
+    }
+}

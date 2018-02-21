@@ -1,0 +1,60 @@
+description: 'Project <%= @aclpolicy_description %>'
+context:
+  project: <%= @aclpolicy_project_name %>
+for:
+<% if @aclpolicy_project_resources -%>
+  resource:
+<% @aclpolicy_project_resources.sort.each do |key,val| -%>
+    - equals:
+        kind: <%= key %>
+      allow:  <%= val %>
+<% end -%>
+<% end -%>
+<% if @aclpolicy_project_adhoc -%>
+  adhoc:
+    - allow:  <%= @aclpolicy_project_adhoc %>
+<% end -%>
+<% if @aclpolicy_project_job -%>
+  job:
+    - allow:  <%= @aclpolicy_project_job %>
+<% end -%>
+<% if @aclpolicy_project_nodes -%>
+  node:
+    - match:
+        nodename:  <%= @aclpolicy_project_nodes %>
+      allow:  <%= @aclpolicy_project_nodes_allow %>
+<% end -%>
+by:
+  group: <%= @aclpolicy_project_groups %>
+
+---
+
+description: 'Application <%= @aclpolicy_description %>'
+context:
+  application: 'rundeck'
+for:
+<% if @aclpolicy_application_resources -%>
+  resource:
+<% @aclpolicy_application_resources.sort.each do |key,val| -%>
+    - equals:
+        kind: <%= key %>
+      allow:  <%= val %>
+<% end -%>
+<% end -%>
+<% if @aclpolicy_application_project -%>
+  project:
+    - match:
+        name: <%= @aclpolicy_project_name %>
+      allow:  <%= @aclpolicy_application_project %>
+<% end -%>
+<% if @aclpolicy_application_project_acl -%>
+  project_acl:
+    - allow:  <%= @aclpolicy_application_project_acl %>
+<% end -%>
+<% if @aclpolicy_application_storage -%>
+  storage:
+    - allow:  <%= @aclpolicy_application_storage %>
+<% end -%>
+by:
+  group: <%= @aclpolicy_project_groups %>
+
